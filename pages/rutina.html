@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mi Rutina</title>
+  <link rel="stylesheet" href="../styles/global.css" />
+  <link rel="stylesheet" href="../styles/rutina.css" />
+</head>
+<body>
+
+<div class="app-container">
+  <h1>🏋️ Rutina semanal</h1>
+
+    <section class="ejercicios-section">
+    <h2>Ejercicios</h2>
+
+    <div class="add-exercise">
+      <input type="text" id="nuevoEjercicio" placeholder="Nombre del ejercicio">
+      <button id="btnAgregarEjercicio">Agregar</button>
+    </div>
+
+    <div id="listaEjercicios"></div>
+  </section>
+
+  <!-- ALTA DE EJERCICIOS -->
+  <section class="ejercicios-section">
+    <h2>Ejercicios</h2>
+
+    <div class="ejercicio-form">
+      <input
+        type="text"
+        id="nuevoEjercicio"
+        placeholder="Nombre del ejercicio"
+      />
+      <button id="addEjercicioBtn">Agregar</button>
+    </div>
+
+    <div id="listaEjercicios" class="ejercicios-list"></div>
+  </section>
+
+  <!-- TABS Y RUTINA -->
+  <div class="days-tabs" id="daysTabs"></div>
+  <div class="rutina-container" id="rutina"></div>
+</div>
+
+<!-- Modal Historial -->
+<div id="modalHistorial" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="modalTitulo"></h3>
+    <canvas id="graficoPeso"></canvas>
+    <button id="cerrarModal">Cerrar</button>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="../scripts/rutina.js"></script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+/* ==============================
+   APP CONTAINER
+================================ */
+.app-container {
+  width: 100%;
+  max-width: 900px;
+  padding: 24px 16px 40px;
+  margin: 0 auto;
+}
+
+/* ==============================
+   TITLE
+================================ */
+.app-container h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 24px;
+  color: #111827;
+}
+
+/* ==============================
+   DAYS TABS
+================================ */
+.days-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+
+.day-tab {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background-color: #e5e7eb;
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.day-tab.active {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* ==============================
+   RUTINA LIST
+================================ */
+.rutina-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ==============================
+   EXERCISE CARD
+================================ */
+.exercise-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Header */
+.exercise-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exercise-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #111827;
+}
+
+/* ==============================
+   INPUTS
+================================ */
+.exercise-inputs {
+  display: flex;
+  gap: 12px;
+}
+
+.exercise-inputs input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.exercise-inputs input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* ==============================
+   ACTIONS
+================================ */
+.exercise-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.exercise-actions button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-save {
+  background-color: #22c55e;
+  color: #ffffff;
+}
+
+.btn-edit {
+  background-color: #f59e0b;
+  color: #ffffff;
+}
+
+/* ==============================
+   EJERCICIOS
+================================ */
+.ejercicios-section {
+  margin-bottom: 32px;
+}
+
+.ejercicios-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: #111827;
+}
+
+.ejercicio-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ejercicio-form input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.ejercicio-form button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ejercicios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ejercicio-item {
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ejercicio-item span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.ejercicio-item button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-add {
+  background-color: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.modal-content canvas {
+  margin-top: 15px;
+}
+
+/* ==============================
+   RESPONSIVE
+================================ */
+@media (max-width: 480px) {
+  .exercise-inputs {
+    flex-direction: column;
+  }
+}
