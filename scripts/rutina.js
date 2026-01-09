@@ -13,10 +13,27 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ==============================
+   UTILIDADES
+================================ */
+function obtenerDiaActual() {
+  const hoy = new Date().getDay();
+  const mapa = {
+    1: "Lunes",
+    2: "Martes",
+    3: "Miércoles",
+    4: "Jueves",
+    5: "Viernes",
+    6: "Sábado",
+    0: "Lunes"
+  };
+  return mapa[hoy];
+}
+
+/* ==============================
    ELEMENTOS
 ================================ */
 const inputEjercicio = document.getElementById("nuevoEjercicio");
-const btnAgregarEjercicio = document.getElementById("btnAgregarEjercicio");
+const btnCrearEjercicio = document.getElementById("btnCrearEjercicio");
 const listaEjercicios = document.getElementById("listaEjercicios");
 const rutinaContainer = document.getElementById("rutina");
 const daysTabs = document.getElementById("daysTabs");
@@ -24,18 +41,23 @@ const daysTabs = document.getElementById("daysTabs");
 const modal = document.getElementById("modalHistorial");
 const cerrarModal = document.getElementById("cerrarModal");
 const modalTitulo = document.getElementById("modalTitulo");
+const tipoGrafico = document.getElementById("tipoGrafico");
 const ctx = document.getElementById("graficoPeso");
 
 const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-let diaActivo = "Lunes";
+let diaActivo = obtenerDiaActual();
 let chartInstance = null;
 
 /* ==============================
-   ALTA EJERCICIOS
+   CREAR EJERCICIO
 ================================ */
-btnAgregarEjercicio.addEventListener("click", async () => {
+btnCrearEjercicio.addEventListener("click", async () => {
   const nombre = inputEjercicio.value.trim();
-  if (!nombre) return alert("Ingresá un nombre");
+
+  if (!nombre) {
+    Swal.fire("Falta el nombre", "", "warning");
+    return;
+  }
 
   await addDoc(collection(db, "ejercicios"), {
     nombre,
@@ -43,15 +65,8 @@ btnAgregarEjercicio.addEventListener("click", async () => {
   });
 
   inputEjercicio.value = "";
+  Swal.fire("Ejercicio creado", "", "success");
   cargarEjercicios();
-});
-
-/* ==============================
-   MODAL
-================================ */
-cerrarModal.addEventListener("click", () => {
-  modal.classList.add("hidden");
-  if (chartInstance) chartInstance.destroy();
 });
 
 /* ==============================
@@ -75,7 +90,7 @@ dias.forEach(dia => {
 });
 
 /* ==============================
-   CARGAR RUTINA
+   RUTINA
 ================================ */
 async function cargarRutina() {
   rutinaContainer.innerHTML = "";
@@ -94,61 +109,78 @@ async function cargarRutina() {
     card.className = "exercise-card";
 
     card.innerHTML = `
-      <div class="exercise-header">
-        <span class="exercise-name">${data.nombre}</span>
-      </div>
+      <h4>${data.nombre}</h4>
 
       <div class="exercise-inputs">
         <input type="number" class="input-series" value="${data.series}">
         <input type="number" class="input-reps" value="${data.repeticiones}">
-        <input type="number" class="input-peso" placeholder="Peso (kg)">
+        <input
+          type="number"
+          class="input-peso"
+          placeholder="Peso"
+          value="${data.ultimoPeso ?? ''}"
+        >
+
+        <input
+          type="number"
+          class="input-pr"
+          placeholder="PR"
+          value="${data.ultimoPR ?? ''}"
+        >
+
       </div>
 
       <div class="exercise-actions">
         <button class="btn-save">Guardar</button>
-        <button class="btn-peso">Registrar peso</button>
+        <button class="btn-peso">Registrar</button>
         <button class="btn-history">📈 Historial</button>
         <button class="btn-edit">Eliminar</button>
       </div>
     `;
 
-    const inputSeries = card.querySelector(".input-series");
-    const inputReps = card.querySelector(".input-reps");
-    const inputPeso = card.querySelector(".input-peso");
-    const btnSave = card.querySelector(".btn-save");
+    const series = card.querySelector(".input-series");
+    const reps = card.querySelector(".input-reps");
+    const peso = card.querySelector(".input-peso");
+    const pr = card.querySelector(".input-pr");
 
-    /* 💾 GUARDAR SERIES / REPS */
-    btnSave.addEventListener("click", async () => {
+    card.querySelector(".btn-save").addEventListener("click", async () => {
       await updateDoc(doc(db, "rutina", docSnap.id), {
-        series: Number(inputSeries.value),
-        repeticiones: Number(inputReps.value),
+        series: Number(series.value),
+        repeticiones: Number(reps.value),
         actualizadoEn: serverTimestamp()
       });
 
-      btnSave.textContent = "✔ Guardado";
-      setTimeout(() => (btnSave.textContent = "Guardar"), 1000);
+      Swal.fire("Guardado", "", "success");
     });
 
-    /* 🏋️ REGISTRAR PESO */
     card.querySelector(".btn-peso").addEventListener("click", async () => {
-      const peso = Number(inputPeso.value);
-      if (!peso) return alert("Ingresá un peso válido");
+      if (!peso.value && !pr.value) {
+        Swal.fire("Ingresá peso o PR", "", "warning");
+        return;
+      }
 
       await addDoc(
         collection(db, "rutina", docSnap.id, "historial"),
         {
           fecha: serverTimestamp(),
-          peso,
-          series: Number(inputSeries.value),
-          repeticiones: Number(inputReps.value)
+          peso: Number(peso.value || 0),
+          pr: Number(pr.value || 0),
+          series: Number(series.value),
+          repeticiones: Number(reps.value)
         }
       );
 
-      inputPeso.value = "";
-      alert("Peso registrado 💪");
+            await updateDoc(doc(db, "rutina", docSnap.id), {
+        ultimoPeso: Number(peso.value || data.ultimoPeso || 0),
+        ultimoPR: Number(pr.value || data.ultimoPR || 0),
+        actualizadoEn: serverTimestamp()
+      });
+
+      peso.value = "";
+      pr.value = "";
+      Swal.fire("Registro guardado 💪", "", "success");
     });
 
-    /* 📈 HISTORIAL */
     card.querySelector(".btn-history").addEventListener("click", async () => {
       modal.classList.remove("hidden");
       modalTitulo.textContent = data.nombre;
@@ -160,35 +192,29 @@ async function cargarRutina() {
         )
       );
 
-      const fechas = [];
-      const pesos = [];
+      const datos = { peso: [], pr: [], fechas: [] };
 
       snapHistorial.forEach(h => {
         const d = h.data();
-        fechas.push(d.fecha.toDate().toLocaleDateString());
-        pesos.push(d.peso);
+        datos.fechas.push(d.fecha.toDate().toLocaleDateString());
+        datos.peso.push(d.peso);
+        datos.pr.push(d.pr);
       });
 
-      if (chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: fechas,
-          datasets: [{
-            label: "Peso (kg)",
-            data: pesos,
-            tension: 0.3
-          }]
-        }
-      });
+      renderGrafico(datos);
     });
 
-    /* ❌ ELIMINAR */
     card.querySelector(".btn-edit").addEventListener("click", async () => {
-      if (!confirm("¿Eliminar ejercicio de la rutina?")) return;
-      await deleteDoc(doc(db, "rutina", docSnap.id));
-      cargarRutina();
+      const res = await Swal.fire({
+        title: "Eliminar ejercicio",
+        showCancelButton: true,
+        confirmButtonText: "Eliminar"
+      });
+
+      if (res.isConfirmed) {
+        await deleteDoc(doc(db, "rutina", docSnap.id));
+        cargarRutina();
+      }
     });
 
     rutinaContainer.appendChild(card);
@@ -196,7 +222,32 @@ async function cargarRutina() {
 }
 
 /* ==============================
-   LISTA DE EJERCICIOS
+   GRÁFICO
+================================ */
+function renderGrafico(datos) {
+  if (chartInstance) chartInstance.destroy();
+
+  const tipo = tipoGrafico.value;
+
+  chartInstance = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: datos.fechas,
+      datasets: [{
+        label: tipo === "peso" ? "Peso (kg)" : "PR",
+        data: datos[tipo],
+        tension: 0.3
+      }]
+    }
+  });
+}
+
+tipoGrafico.addEventListener("change", () => {
+  if (chartInstance) chartInstance.destroy();
+});
+
+/* ==============================
+   EJERCICIOS
 ================================ */
 async function cargarEjercicios() {
   listaEjercicios.innerHTML = "";
@@ -208,38 +259,51 @@ async function cargarEjercicios() {
 
     const div = document.createElement("div");
     div.className = "ejercicio-item";
-
     div.innerHTML = `
       <span>${ejercicio.nombre}</span>
       <button class="btn-add">➕ Rutina</button>
     `;
 
     div.querySelector(".btn-add").addEventListener("click", async () => {
-      const series = prompt("Series:");
-      const reps = prompt("Repeticiones:");
-      if (!series || !reps) return;
+      const { value: form } = await Swal.fire({
+        title: "Agregar a rutina",
+        html: `
+          <input id="s" class="swal2-input" placeholder="Series">
+          <input id="r" class="swal2-input" placeholder="Reps">
+          <input id="p" class="swal2-input" placeholder="Peso">
+          <input id="pr" class="swal2-input" placeholder="PR">
+        `,
+        preConfirm: () => ({
+          series: document.getElementById("s").value,
+          reps: document.getElementById("r").value,
+          peso: document.getElementById("p").value,
+          pr: document.getElementById("pr").value
+        })
+      });
 
-      const q = query(
-        collection(db, "rutina"),
-        where("dia", "==", diaActivo),
-        where("ejercicioId", "==", docSnap.id)
-      );
+      if (!form) return;
 
-      const existente = await getDocs(q);
-
-      if (!existente.empty) {
-        alert("ℹ️ Este ejercicio ya está agregado en este día");
-        return;
-      }
-
-      await addDoc(collection(db, "rutina"), {
+      const ref = await addDoc(collection(db, "rutina"), {
         dia: diaActivo,
         ejercicioId: docSnap.id,
         nombre: ejercicio.nombre,
-        series: Number(series),
-        repeticiones: Number(reps),
+        series: Number(form.series),
+        repeticiones: Number(form.reps),
+        ultimoPeso: Number(form.peso || 0),
+        ultimoPR: Number(form.pr || 0),
         creadoEn: serverTimestamp()
       });
+
+      await addDoc(
+        collection(db, "rutina", ref.id, "historial"),
+        {
+          fecha: serverTimestamp(),
+          peso: Number(form.peso || 0),
+          pr: Number(form.pr || 0),
+          series: Number(form.series),
+          repeticiones: Number(form.reps)
+        }
+      );
 
       cargarRutina();
     });

@@ -3,28 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <title>Mi Rutina</title>
+
   <link rel="stylesheet" href="../styles/global.css" />
   <link rel="stylesheet" href="../styles/rutina.css" />
+
+  <!-- SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="app-container">
   <h1>🏋️ Rutina semanal</h1>
 
-    <section class="ejercicios-section">
-    <h2>Ejercicios</h2>
-
-    <div class="add-exercise">
-      <input type="text" id="nuevoEjercicio" placeholder="Nombre del ejercicio">
-      <button id="btnAgregarEjercicio">Agregar</button>
-    </div>
-
-    <div id="listaEjercicios"></div>
-  </section>
-
-  <!-- ALTA DE EJERCICIOS -->
+  <!-- CREAR NUEVO EJERCICIO -->
   <section class="ejercicios-section">
-    <h2>Ejercicios</h2>
+    <h2>➕ Crear nuevo ejercicio</h2>
 
     <div class="ejercicio-form">
       <input
@@ -32,27 +28,38 @@
         id="nuevoEjercicio"
         placeholder="Nombre del ejercicio"
       />
-      <button id="addEjercicioBtn">Agregar</button>
+      <button id="btnCrearEjercicio">Crear</button>
     </div>
+  </section>
 
+  <!-- LISTA EJERCICIOS -->
+  <section class="ejercicios-section">
+    <h2>Ejercicios disponibles</h2>
     <div id="listaEjercicios" class="ejercicios-list"></div>
   </section>
 
-  <!-- TABS Y RUTINA -->
+  <!-- TABS -->
   <div class="days-tabs" id="daysTabs"></div>
+
+  <!-- RUTINA -->
   <div class="rutina-container" id="rutina"></div>
 </div>
 
-<!-- Modal Historial -->
+<!-- MODAL HISTORIAL -->
 <div id="modalHistorial" class="modal hidden">
   <div class="modal-content">
     <h3 id="modalTitulo"></h3>
+
+    <select id="tipoGrafico">
+      <option value="peso">Peso</option>
+      <option value="pr">PR</option>
+    </select>
+
     <canvas id="graficoPeso"></canvas>
     <button id="cerrarModal">Cerrar</button>
   </div>
 </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module" src="../scripts/rutina.js"></script>
+<script type="module" src="../scripts/rutina.js"></script>
 </body>
 </html>
